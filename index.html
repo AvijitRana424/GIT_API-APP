@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>git api</title>
+    <link rel="stylesheet" href="./index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div id="container">
+        
+         <div id="apiheading">
+              FIND YOUR GITHUB PROFILE
+         </div>
+         <div id="gitIcon">
+            <i class="fa-brands fa-github fa-gitdesign"></i>
+         </div>
+         <div id="formdiv">
+            <h3 style="margin-left: 35%;">API SAMPLE</h3>
+            <input type="text" id="typeUsername" placeholder="Github username....">
+            <button id="btn">Pull User Data</button>
+         </div>
+    </div>
+
+    <div id="display">
+         <div id="displayimg">
+            <img src="" alt="" width="180" height="180" id="avtar" style="margin-bottom: 5px; ">
+            <span id="userid" style="color:blue;font-weight:bold; margin-left:4px;"></span>
+         </div>
+         <div id="displaydetails">
+            <br>
+            <br>
+             <span id="follower" style="color: orangered;font-weight:bold"></span>
+             <br>
+             <br>
+             <br>
+             <span id="following" style="color:blue;font-weight: bold;"></span>
+             <br>
+             <br>
+             <br>
+             <span id="repos" style="color: rgb(105, 14, 75);font-weight: bold;"></span>
+         </div>
+         
+         <div id="display-repo">
+            
+        </div>
+    </div>
+
+    <script>
+        let uname = document.getElementById("typeUsername");
+        let btn = document.getElementById("btn");
+        let image = document.getElementById("avtar");
+        let userid = document.getElementById("userid");
+        let follower = document.getElementById("follower");
+        let following = document.getElementById("following");
+        let repos = document.getElementById("repos");
+        let displayRepos = document.getElementById("display-repo");
+        let displa = document.getElementById("display");
+       
+        btn.addEventListener("click",function(){
+            
+            let request = new XMLHttpRequest();
+            request.open("GET",`https://api.github.com/users/${uname.value}`,true);
+            request.addEventListener("load",function(){
+                displa.style.display = "block";
+                let details = JSON.parse(request.response);
+                image.src = details.avatar_url;
+                follower.innerHTML = "FOLLOWER : "+details.followers;
+                following.innerHTML = "FOLLOWING : "+details.following;
+                userid.innerHTML = "@ "+details.login ;
+
+
+            });
+
+            request.send();
+            
+            let repoFind = new XMLHttpRequest();
+
+            repoFind.open("GET",`https://api.github.com/users/${uname.value}/repos`,true);
+            repoFind.addEventListener("load",function(){
+               let obj = JSON.parse(repoFind.responseText);
+               repos.innerHTML = "REPOS : "+obj.length;
+                let i = 1;
+                displayRepos.innerHTML = "";
+                
+               obj.forEach(function(repo){
+                 
+                  let span = document.createElement("span");
+                  span.style.fontWeight="bold";
+                  span.style.backgroundColor="red";
+                  span.style.color="white";
+                  
+                  span.innerHTML = i+". "+repo.name+"  ";
+                  i++;
+                  let brTag = document.createElement("br");
+                  let brTaglelo = document.createElement("br");
+                 
+                  displayRepos.appendChild(span);
+                  
+                    displayRepos.appendChild(brTag);
+                    displayRepos.appendChild(brTaglelo);
+                    
+                  
+
+               })
+            });
+            repoFind.send();
+        });
+
+    </script>
+
+
+    
+</body>
+</html>
